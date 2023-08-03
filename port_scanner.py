@@ -5,6 +5,7 @@
 """Imports-> datetime module as dt; threading module; socket module; time module; pyfiglet module; sys module"""
 
 from datetime import datetime as dt
+from tqdm import tqdm
 import threading
 import pyfiglet
 import socket
@@ -23,6 +24,7 @@ class PortScanner:
         self.host = socket.gethostbyname(socket.gethostname())
         self.ports_scanned = 0
         self.ports_open = 0
+        self.available = []
 
     def ps_run(self) -> None:
         """
@@ -67,7 +69,7 @@ class PortScanner:
             :return: None
         """
         try:
-            for port in range(1, 65535):
+            for port in tqdm(range(1, 65535)):
                 current_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                 socket.setdefaulttimeout(0.5)
                 curt_thread = threading.Thread(target=self.ps_new_thread, args=(current_socket, port), daemon=True)
@@ -86,6 +88,8 @@ class PortScanner:
             print(f"OPEN PORTS    : {self.ports_open}")
             print(f"CLOSED PORTS  : {self.ports_scanned - self.ports_open}")
             print("_" * 50)
+            for port in self.available:
+                print(f"[*] Port {port} is open.")
 
     def ps_new_thread(self, curt_socket, curt_port) -> None:
         """
@@ -98,10 +102,11 @@ class PortScanner:
         try:
             sock_return_code = curt_socket.connect_ex((self.ps_target, curt_port))
             if sock_return_code == 0:
-                print(f"\n[*] Port {curt_port} is open.\n")
+                self.available.append(curt_port)
+                # print(f"\n[*] Port {curt_port} is open.\n")
                 self.ports_open += 1
-            else:
-                print(f"[*] Port {curt_port} is closed, return code: {sock_return_code}")
+            # else:
+            #     print(f"[*] Port {curt_port} is closed, return code: {sock_return_code}")
             curt_socket.close()
         except socket.error:
             print("Host not responding")
@@ -132,3 +137,4 @@ class PortScanner:
         """
         print("\nExiting")
         sys.exit()
+
