@@ -2,9 +2,10 @@
 # Author: PRATHAM BHISE
 # This python script is used to scan TCP ports.
 
-"""Imports-> datetime module as dt; threading module; socket module; time module; pyfiglet module; sys module"""
+"""Imports-> datetime module as dt; tqdm module; threading module; socket module; time module; pyfiglet module; sys module"""
 
 from datetime import datetime as dt
+from ports_dict import ports_dict
 from tqdm import tqdm
 import threading
 import pyfiglet
@@ -44,8 +45,8 @@ class PortScanner:
         """
         ascii_banner = pyfiglet.figlet_format("PORT SCANNER")
         print(ascii_banner)
-        print(f"HOST NAME       : {self.host_name}")
-        print(f"HOST IP ADDRESS : {self.host}")
+        print(f"POSSIBLE HOST NAME       : {self.host_name}")
+        print(f"POSSIBLE HOST IP ADDRESS : {self.host}")
 
     def ps_get_details(self) -> None:
         """
@@ -59,7 +60,7 @@ class PortScanner:
             self.quit()
         print("_" * 50)
         print("Scanning Target:", self.ps_target)
-        print("Scanning started at" + self.timestamp())
+        print("Scanning Started At" + self.timestamp())
         print("_" * 50)
 
     def ps_connect(self) -> None:
@@ -68,6 +69,7 @@ class PortScanner:
 
             :return: None
         """
+        print("\nScanning In Progress...")
         try:
             for port in tqdm(range(1, 65535)):
                 current_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -81,15 +83,21 @@ class PortScanner:
             print("Host not responding")
             self.quit()
         finally:
+            print()
             print("_" * 50)
             print("Scanning Target:", self.ps_target)
-            print("Scanning ended at" + self.timestamp())
+            print("Scanning Ended At" + self.timestamp())
             print(f"SCANNED PORTS : {self.ports_scanned}")
             print(f"OPEN PORTS    : {self.ports_open}")
             print(f"CLOSED PORTS  : {self.ports_scanned - self.ports_open}")
             print("_" * 50)
+            print("State\tPort\tService")
+            print("_" * 50)
             for port in self.available:
-                print(f"[*] Port {port} is open.")
+                if port in ports_dict.keys():
+                    print(f"[open]\t{port}\t\t{ports_dict[port]}")
+                else:
+                    print(f"[open]\t{port}\t\tUnreserved Port")
 
     def ps_new_thread(self, curt_socket, curt_port) -> None:
         """
