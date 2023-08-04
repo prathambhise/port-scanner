@@ -91,7 +91,7 @@ class PortScanner:
             print(f"OPEN PORTS    : {self.ports_open}")
             print(f"CLOSED PORTS  : {self.ports_scanned - self.ports_open}")
             print("_" * 50)
-            print("State\tPort\tService")
+            print("State\tPort\t\tService")
             print("_" * 50)
             for port in self.available:
                 if port in ports_dict.keys():
