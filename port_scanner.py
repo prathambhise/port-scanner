@@ -2,7 +2,11 @@
 # Author: PRATHAM BHISE
 # This python script is used to scan TCP ports.
 
-"""Imports-> datetime module as dt; tqdm module; threading module; socket module; time module; pyfiglet module; sys module"""
+"""
+Imports->
+datetime module as dt; tqdm module; threading module;
+socket module; time module; pyfiglet module; sys module
+"""
 
 from datetime import datetime as dt
 from ports_dict import ports_dict
@@ -14,13 +18,13 @@ import sys
 
 
 class PortScanner:
-    def __init__(self) -> None:
+    def __init__(self, target_ip) -> None:
         """
             Initialise instance for PortScanner class.
 
             :return: None
         """
-        self.ps_target = "localhost"
+        self.ps_target = target_ip
         self.host_name = socket.gethostname()
         self.host = socket.gethostbyname(socket.gethostname())
         self.ports_scanned = 0
@@ -54,14 +58,14 @@ class PortScanner:
 
             :return: None
         """
-        try:
-            self.ps_target = input(str("TARGET IP: "))
-        except KeyboardInterrupt:
-            self.quit()
-        print("_" * 50)
+        # try:
+        #     self.ps_target = input(str("TARGET IP: "))
+        # except KeyboardInterrupt:
+        #     self.quit()
+        # print("_" * 50)
         print("Scanning Target:", self.ps_target)
         print("Scanning Started At" + self.timestamp())
-        print("_" * 50)
+        print("-" * 50)
 
     def ps_connect(self) -> None:
         """
@@ -84,15 +88,15 @@ class PortScanner:
             self.quit()
         finally:
             print()
-            print("_" * 50)
+            print("-" * 50)
             print("Scanning Target:", self.ps_target)
             print("Scanning Ended At" + self.timestamp())
             print(f"SCANNED PORTS : {self.ports_scanned}")
             print(f"OPEN PORTS    : {self.ports_open}")
             print(f"CLOSED PORTS  : {self.ports_scanned - self.ports_open}")
-            print("_" * 50)
+            print("-" * 50)
             print("State\tPort\t\tService")
-            print("_" * 50)
+            print("-" * 50)
             for port in self.available:
                 if port in ports_dict.keys():
                     print(f"[open]\t{port}\t\t{ports_dict[port]}")
@@ -145,4 +149,3 @@ class PortScanner:
         """
         print("\nExiting")
         sys.exit()
-
